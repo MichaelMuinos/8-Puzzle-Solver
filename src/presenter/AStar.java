@@ -75,21 +75,42 @@ public class AStar {
                 }
             }
         }
-        System.out.println(state);
         // check swap left successor
         if(yPos - 1 > -1) {
             PuzzleState swapLeftState = new PuzzleState();
             int[][] swapLeftBoard = deepCopyBoard(state);
             swap(swapLeftBoard, xPos, yPos, xPos, yPos - 1);
             swapLeftState.setBoard(swapLeftBoard);
+            successors.add(swapLeftState);
         }
         // check swap right successor
         if(yPos + 1 < PuzzleState.SIZE) {
             PuzzleState swapRightState = new PuzzleState();
+            int[][] swapRightBoard = deepCopyBoard(state);
+            swap(swapRightBoard, xPos, yPos, xPos, yPos + 1);
+            swapRightState.setBoard(swapRightBoard);
+            successors.add(swapRightState);
+        }
+        // check swap up successor
+        if(xPos - 1 > -1) {
+            PuzzleState swapUpState = new PuzzleState();
+            int[][] swapUpBoard = deepCopyBoard(state);
+            swap(swapUpBoard, xPos, yPos, xPos - 1, yPos);
+            swapUpState.setBoard(swapUpBoard);
+            successors.add(swapUpState);
+        }
+        // check swap down successor
+        if(xPos + 1 < PuzzleState.SIZE) {
+            PuzzleState swapDownState = new PuzzleState();
+            int[][] swapDownBoard = deepCopyBoard(state);
+            swap(swapDownBoard, xPos, yPos, xPos + 1, yPos);
+            swapDownState.setBoard(swapDownBoard);
+            successors.add(swapDownState);
         }
         return successors;
     }
 
+    // used to swap the tile with the blank space
     private void swap(int[][] board, int xPos, int yPos, int xTilePos, int yTilePos) {
         int tileNumber = board[xTilePos][yTilePos];
         board[xTilePos][yTilePos] = 0;

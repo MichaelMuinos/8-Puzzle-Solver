@@ -13,7 +13,7 @@ public class Main {
         AStar a = new AStar(null);
         PuzzleState puzzleState = new PuzzleState();
         puzzleState.generateRandomBoard();
-        System.out.println(a.getSuccessors(puzzleState));
+        a.getSuccessors(puzzleState);
     }
 
 }
