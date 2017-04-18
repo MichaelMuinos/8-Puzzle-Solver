@@ -6,32 +6,27 @@ import java.util.Random;
 
 public class PuzzleState {
 
-    private static final int SIZE = 3;
+    public static final int SIZE = 3;
+
     private static final Random random = new Random();
     private static final List<Integer> boardNumbers = new ArrayList<>();
 
-    private int[][] board = new int[SIZE][SIZE];
-    // variables used for the equation f = g + h
+    private int[][] board;
     private int f = 0;
     private int g = 0;
     private int h = 0;
 
-    public static final int[][] goal = new int[SIZE][SIZE];
-
     static {
-        // initialize contents of goal and boardNumbers
-        int count = 0;
-        for(int i = 0; i < SIZE; i++) {
-            for(int j = 0; j < SIZE; j++) {
-                goal[i][j] = count;
-                boardNumbers.add(count);
-                ++count;
-            }
-        }
+        // initialize contents of boardNumbers
+        for(int i = 0; i < 9; i++) boardNumbers.add(i);
+    }
+
+    public PuzzleState() {
+        board = new int[SIZE][SIZE];
     }
 
     // Used to initialize random board
-    public PuzzleState() {
+    public void generateRandomBoard() {
         for(int i = 0; i < board.length; i++) {
             for(int j = 0; j < board[i].length; j++) {
                 int index = random.nextInt(boardNumbers.size());
@@ -43,6 +38,10 @@ public class PuzzleState {
 
     public int[][] getBoard() {
         return board;
+    }
+
+    public void setBoard(int[][] board) {
+        this.board = board;
     }
 
     public int getF() {
@@ -69,6 +68,30 @@ public class PuzzleState {
         this.h = h;
     }
 
+    // copy method
+    public PuzzleState copyPuzzleState() {
+        PuzzleState copyState = new PuzzleState();
+        copyState.setBoard(this.board);
+        return copyState;
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        PuzzleState otherPuzzleState = (PuzzleState) obj;
+        for(int i = 0; i < SIZE; i++) {
+            for(int j = 0; j < SIZE; j++) {
+                if(this.board[i][j] != otherPuzzleState.board[i][j])
+                    return false;
+            }
+        }
+        return true;
+    }
+
     @Override
     public String toString() {
         String boardToString = "";
@@ -80,4 +103,5 @@ public class PuzzleState {
         }
         return boardToString;
     }
+
 }
