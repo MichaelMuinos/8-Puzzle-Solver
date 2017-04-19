@@ -1,5 +1,3 @@
-package com.michaelmuinos;
-
 import ui.PuzzleCommandLine;
 
 public class Main {

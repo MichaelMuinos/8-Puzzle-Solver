@@ -1,7 +1,7 @@
-package com.michaelmuinos.algorithm;
+package algorithm;
 
 import javafx.util.Pair;
-import com.michaelmuinos.model.PuzzleState;
+import model.PuzzleState;
 import java.util.*;
 
 public class AStar {

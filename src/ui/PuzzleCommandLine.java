@@ -1,4 +1,4 @@
-package com.michaelmuinos.ui;
+package ui;
 
 import model.PuzzleState;
 import algorithm.AStar;
