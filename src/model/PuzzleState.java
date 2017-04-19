@@ -12,6 +12,7 @@ public class PuzzleState {
     private static final List<Integer> boardNumbers = new ArrayList<>();
 
     private int[][] board;
+    private PuzzleState parent;
     private int f = 0;
     private int g = 0;
     private int h = 0;
@@ -42,6 +43,14 @@ public class PuzzleState {
 
     public void setBoard(int[][] board) {
         this.board = board;
+    }
+
+    public PuzzleState getParent() {
+        return parent;
+    }
+
+    public void setParent(PuzzleState parent) {
+        this.parent = parent;
     }
 
     public int getF() {

@@ -37,20 +37,27 @@ public class AStar {
     public void performAStar(PuzzleState initialState, int heuristic) {
         frontier = new PriorityQueue<>(INITIAL_CAPACITY, comparator);
         visitedSet = new HashSet<>();
+        goalState.setParent(null);
+        // check to see if the initial state is the goal state
+        if(initialState.equals(goalState)) {
+            System.out.println(initialState);
+            return;
+        }
+        // add the starting puzzle to the frontier
         frontier.add(initialState);
         // while frontier is not empty
         while(!frontier.isEmpty()) {
             // find puzzle state with smallest f in the frontier
             PuzzleState leastCostPuzzleState = frontier.remove();
-            System.out.println(leastCostPuzzleState);
-            if(leastCostPuzzleState.equals(goalState)) return;
             // generate all possible successors
             List<PuzzleState> successors = getSuccessors(leastCostPuzzleState);
             for(int i = 0; i < successors.size(); i++) {
                 PuzzleState successor = successors.get(i);
                 // if the successor is equal to the goal state, stop the search
+                // and set the goal state parent
                 if(successor.equals(goalState)) {
-                    System.out.println(goalState);
+                    goalState.setParent(successor.getParent());
+                    printOptimalSolution();
                     return;
                 }
                 // parent g value + distance between successor and parent
@@ -62,8 +69,7 @@ public class AStar {
                 successor.setF(successor.getG() + successor.getH());
                 // if it has the same puzzle state in the visited set and has a lower
                 // f than the successor, skip it
-                if(!containsSuccessorAndHasLowerCost(successor))
-                    frontier.add(successor);
+                if(!containsSuccessorAndHasLowerCost(successor)) frontier.add(successor);
             }
             // add to our visited set
             visitedSet.add(leastCostPuzzleState);
@@ -89,7 +95,7 @@ public class AStar {
         // check swap right successor
         if(yPos + 1 < PuzzleState.SIZE) getSuccessorsHelper(state, successors, xPos, yPos, xPos, yPos + 1);
         // check swap up successor
-        if(xPos - 1 > -1) getSuccessorsHelper(state, successors, xPos, yPos, xPos - 1, yPos);
+        if(xPos - 1 > -1) getSuccessorsHelper(state, successors, xPos, yPos,xPos - 1, yPos);
         // check swap down successor
         if(xPos + 1 < PuzzleState.SIZE) getSuccessorsHelper(state, successors, xPos, yPos, xPos + 1, yPos);
         return successors;
@@ -100,6 +106,7 @@ public class AStar {
         int[][] swapStateBoard = deepCopyBoard(state);
         swap(swapStateBoard, xPos, yPos, xTilePos, yTilePos);
         swapState.setBoard(swapStateBoard);
+        swapState.setParent(state);
         successors.add(swapState);
     }
 
@@ -142,6 +149,18 @@ public class AStar {
             }
         }
         return value;
+    }
+
+    private void printOptimalSolution() {
+        List<PuzzleState> optimalPath = new ArrayList<>();
+        PuzzleState current = goalState;
+        while(current != null) {
+            optimalPath.add(current);
+            current = current.getParent();
+        }
+        // print the solution
+        for(int i = optimalPath.size() - 1; i >= 0; --i)
+            System.out.println(optimalPath.get(i));
     }
 
     // custom comparator class to sort PuzzleState objects
