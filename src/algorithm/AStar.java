@@ -1,7 +1,7 @@
 package algorithm;
 
 import javafx.util.Pair;
-import model.PuzzleState;
+
 import java.util.*;
 
 public class AStar {
@@ -34,13 +34,29 @@ public class AStar {
         comparator = new PuzzleStateComparator();
     }
 
-    public void performAStar(PuzzleState initialState, int heuristic) {
+    public void performAStar(PuzzleState initialState) {
+        System.out.println("\nINITIAL STATE W/ HEURISTIC ONE");
+        performAStarHelper(initialState, HEURISTIC_ONE);
+        System.out.println("FINISHED\n\n---------------------------------------------------");
+        System.out.println("\nINITIAL STATE W/ HEURISTIC TWO");
+        performAStarHelper(initialState, HEURISTIC_TWO);
+        System.out.println("FINISHED\n\n");
+    }
+
+    public void performAStarHelper(PuzzleState initialState, int heuristic) {
+        // start timer
+        long startTime = System.currentTimeMillis();
+        // end timer
+        long endTime;
+        // reset frontier, goal state, and visited set
         frontier = new PriorityQueue<>(INITIAL_CAPACITY, comparator);
         visitedSet = new HashSet<>();
         goalState.setParent(null);
+        goalState.setF(0);
         // check to see if the initial state is the goal state
         if(initialState.equals(goalState)) {
-            System.out.println(initialState);
+            endTime = System.currentTimeMillis();
+            printOptimalSolution(endTime);
             return;
         }
         // add the starting puzzle to the frontier
@@ -57,7 +73,9 @@ public class AStar {
                 // and set the goal state parent
                 if(successor.equals(goalState)) {
                     goalState.setParent(successor.getParent());
-                    printOptimalSolution();
+                    goalState.setF(successor.getF());
+                    endTime = System.currentTimeMillis();
+                    printOptimalSolution(endTime - startTime);
                     return;
                 }
                 // parent g value + distance between successor and parent
@@ -151,7 +169,7 @@ public class AStar {
         return value;
     }
 
-    private void printOptimalSolution() {
+    private void printOptimalSolution(long time) {
         List<PuzzleState> optimalPath = new ArrayList<>();
         PuzzleState current = goalState;
         while(current != null) {
@@ -159,8 +177,16 @@ public class AStar {
             current = current.getParent();
         }
         // print the solution
-        for(int i = optimalPath.size() - 1; i >= 0; --i)
+        for(int i = optimalPath.size() - 1; i >= 0; --i) {
+            System.out.println(optimalPath.get(i).getF());
             System.out.println(optimalPath.get(i));
+        }
+        // print time to run in seconds
+        System.out.println("\nTime to run: " + time / 1000.0 + " seconds");
+        // print total steps
+        System.out.println("Total steps: " + (optimalPath.size() - 1));
+        // print total cost
+        System.out.println("Search cost: " + optimalPath.get(0).getF());
     }
 
     // custom comparator class to sort PuzzleState objects
