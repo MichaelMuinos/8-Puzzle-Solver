@@ -85,38 +85,22 @@ public class AStar {
             }
         }
         // check swap left successor
-        if(yPos - 1 > -1) {
-            PuzzleState swapLeftState = new PuzzleState();
-            int[][] swapLeftBoard = deepCopyBoard(state);
-            swap(swapLeftBoard, xPos, yPos, xPos, yPos - 1);
-            swapLeftState.setBoard(swapLeftBoard);
-            successors.add(swapLeftState);
-        }
+        if(yPos - 1 > -1) getSuccessorsHelper(state, successors, xPos, yPos, xPos, yPos - 1);
         // check swap right successor
-        if(yPos + 1 < PuzzleState.SIZE) {
-            PuzzleState swapRightState = new PuzzleState();
-            int[][] swapRightBoard = deepCopyBoard(state);
-            swap(swapRightBoard, xPos, yPos, xPos, yPos + 1);
-            swapRightState.setBoard(swapRightBoard);
-            successors.add(swapRightState);
-        }
+        if(yPos + 1 < PuzzleState.SIZE) getSuccessorsHelper(state, successors, xPos, yPos, xPos, yPos + 1);
         // check swap up successor
-        if(xPos - 1 > -1) {
-            PuzzleState swapUpState = new PuzzleState();
-            int[][] swapUpBoard = deepCopyBoard(state);
-            swap(swapUpBoard, xPos, yPos, xPos - 1, yPos);
-            swapUpState.setBoard(swapUpBoard);
-            successors.add(swapUpState);
-        }
+        if(xPos - 1 > -1) getSuccessorsHelper(state, successors, xPos, yPos, xPos - 1, yPos);
         // check swap down successor
-        if(xPos + 1 < PuzzleState.SIZE) {
-            PuzzleState swapDownState = new PuzzleState();
-            int[][] swapDownBoard = deepCopyBoard(state);
-            swap(swapDownBoard, xPos, yPos, xPos + 1, yPos);
-            swapDownState.setBoard(swapDownBoard);
-            successors.add(swapDownState);
-        }
+        if(xPos + 1 < PuzzleState.SIZE) getSuccessorsHelper(state, successors, xPos, yPos, xPos + 1, yPos);
         return successors;
+    }
+
+    private void getSuccessorsHelper(PuzzleState state, List<PuzzleState> successors, int xPos, int yPos, int xTilePos, int yTilePos) {
+        PuzzleState swapState = new PuzzleState();
+        int[][] swapStateBoard = deepCopyBoard(state);
+        swap(swapStateBoard, xPos, yPos, xTilePos, yTilePos);
+        swapState.setBoard(swapStateBoard);
+        successors.add(swapState);
     }
 
     // used to swap the tile with the blank space
