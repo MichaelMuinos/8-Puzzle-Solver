@@ -1,4 +1,4 @@
-package models;
+package model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,18 +66,6 @@ public class PuzzleState {
 
     public void setH(int h) {
         this.h = h;
-    }
-
-    // copy method
-    public PuzzleState copyPuzzleState() {
-        PuzzleState copyState = new PuzzleState();
-        copyState.setBoard(this.board);
-        return copyState;
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
     }
 
     @Override
