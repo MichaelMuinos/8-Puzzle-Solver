@@ -1,7 +1,6 @@
 package algorithm;
 
 import javafx.util.Pair;
-
 import java.util.*;
 
 public class AStar {
@@ -35,12 +34,12 @@ public class AStar {
     }
 
     public void performAStar(PuzzleState initialState) {
-        System.out.println("\nINITIAL STATE W/ HEURISTIC ONE");
+        System.out.println("\n*** NOTE: Heuristic one in some cases when attempting to solve a randomly" +
+                "\ngenerated puzzle can take a really long time depending on the depth, so if it is taking awhile" +
+                "\nto print out anything, it is because of heuristic one still performing the calculation. ***");
+        System.out.println("\nCalculating...");
         performAStarHelper(initialState, HEURISTIC_ONE);
-        System.out.println("FINISHED\n\n---------------------------------------------------");
-        System.out.println("\nINITIAL STATE W/ HEURISTIC TWO");
         performAStarHelper(initialState, HEURISTIC_TWO);
-        System.out.println("FINISHED\n\n");
     }
 
     public void performAStarHelper(PuzzleState initialState, int heuristic) {
@@ -56,7 +55,7 @@ public class AStar {
         // check to see if the initial state is the goal state
         if(initialState.equals(goalState)) {
             endTime = System.currentTimeMillis();
-            printOptimalSolution(endTime);
+            printOptimalSolution(endTime - startTime, heuristic);
             return;
         }
         // add the starting puzzle to the frontier
@@ -75,7 +74,7 @@ public class AStar {
                     goalState.setParent(successor.getParent());
                     goalState.setF(successor.getF());
                     endTime = System.currentTimeMillis();
-                    printOptimalSolution(endTime - startTime);
+                    printOptimalSolution(endTime - startTime, heuristic);
                     return;
                 }
                 // parent g value + distance between successor and parent
@@ -162,15 +161,20 @@ public class AStar {
                         ++value;
                 } else {
                     if(board[i][j] != 0)
-                        value += Math.abs(i - coordinates.get(board[i][j]).getKey()) - Math.abs(j - coordinates.get(board[i][j]).getValue());
+                        value += Math.abs(i - coordinates.get(board[i][j]).getKey()) + Math.abs(j - coordinates.get(board[i][j]).getValue());
                 }
             }
         }
         return value;
     }
 
-    private void printOptimalSolution(long time) {
+    private void printOptimalSolution(long time, int heuristic) {
+        // print heuristic message
+        if(heuristic == HEURISTIC_ONE) System.out.println("\nINITIAL STATE W/ HEURISTIC ONE (MISPLACED TILES)");
+        else System.out.println("\nINITIAL STATE W/ HEURISTIC TWO (MANHATTAN DISTANCE)");
+        // create optimal path list
         List<PuzzleState> optimalPath = new ArrayList<>();
+        int searchCost = 0;
         PuzzleState current = goalState;
         while(current != null) {
             optimalPath.add(current);
@@ -178,15 +182,16 @@ public class AStar {
         }
         // print the solution
         for(int i = optimalPath.size() - 1; i >= 0; --i) {
-            System.out.println(optimalPath.get(i).getF());
             System.out.println(optimalPath.get(i));
+            searchCost += optimalPath.get(i).getF();
         }
         // print time to run in seconds
         System.out.println("\nTime to run: " + time / 1000.0 + " seconds");
         // print total steps
         System.out.println("Total steps: " + (optimalPath.size() - 1));
         // print total cost
-        System.out.println("Search cost: " + optimalPath.get(0).getF());
+        System.out.println("Search cost: " + searchCost);
+        System.out.println("FINISHED\n\n---------------------------------------------------");
     }
 
     // custom comparator class to sort PuzzleState objects

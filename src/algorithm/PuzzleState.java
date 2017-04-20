@@ -9,25 +9,42 @@ public class PuzzleState {
     public static final int SIZE = 3;
 
     private static final Random random = new Random();
-    private static final List<Integer> boardNumbers = new ArrayList<>();
 
-    private int[][] board;
+    private List<Integer> boardNumbers;
     private PuzzleState parent;
+    private int[][] board;
     private int f = 0;
     private int g = 0;
     private int h = 0;
 
-    static {
-        // initialize contents of boardNumbers
-        for(int i = 0; i < 9; i++) boardNumbers.add(i);
+    public PuzzleState() {
+        init();
     }
 
-    public PuzzleState() {
+    public PuzzleState(String str) {
+        init();
+        assignBoard(str);
+    }
+
+    private void init() {
         board = new int[SIZE][SIZE];
+        boardNumbers = new ArrayList<>();
+    }
+
+    private void assignBoard(String str) {
+        int count = 0;
+        for(int i = 0; i < board.length; i++) {
+            for(int j = 0; j < board[i].length; j++) {
+                board[i][j] = Character.getNumericValue(str.charAt(count));
+                ++count;
+            }
+        }
     }
 
     // Used to initialize random board
     public void generateRandomBoard() {
+        // initialize contents of boardNumbers
+        for(int i = 0; i < 9; i++) boardNumbers.add(i);
         for(int i = 0; i < board.length; i++) {
             for(int j = 0; j < board[i].length; j++) {
                 int index = random.nextInt(boardNumbers.size());
@@ -35,6 +52,18 @@ public class PuzzleState {
                 boardNumbers.remove(index);
             }
         }
+    }
+
+    public int[] convertToOneDimension() {
+        int[] oneDimension = new int[SIZE * SIZE];
+        int count = 0;
+        for(int i = 0; i < this.board.length; i++) {
+            for(int j = 0; j < this.board[i].length; j++) {
+                oneDimension[count] = this.board[i][j];
+                ++count;
+            }
+        }
+        return oneDimension;
     }
 
     public int[][] getBoard() {
