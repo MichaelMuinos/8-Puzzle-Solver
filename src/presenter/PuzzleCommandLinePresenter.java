@@ -2,7 +2,6 @@ package presenter;
 
 import algorithm.AStar;
 import algorithm.PuzzleState;
-import com.sun.deploy.util.StringUtils;
 
 public class PuzzleCommandLinePresenter {
 
@@ -31,7 +30,7 @@ public class PuzzleCommandLinePresenter {
     }
 
     private boolean isValidInput(String input) {
-        String trimInput = StringUtils.trimWhitespace(input);
+        String trimInput = input.trim();
         if(trimInput.length() != 9) return false;
         for(int i = 0; i < 9; i++) {
             if(trimInput.length() - trimInput.replace(String.valueOf(i), "").length() != 1)
