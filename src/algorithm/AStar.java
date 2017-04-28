@@ -1,6 +1,9 @@
 package algorithm;
 
+import data.Stat;
 import javafx.util.Pair;
+
+import java.text.DecimalFormat;
 import java.util.*;
 
 public class AStar {
@@ -42,11 +45,17 @@ public class AStar {
         performAStarHelper(initialState, HEURISTIC_TWO);
     }
 
-    public void performAStarHelper(PuzzleState initialState, int heuristic) {
+    public Stat performAStar(PuzzleState initialState, int heuristic) {
+        return performAStarHelper(initialState, heuristic);
+    }
+
+    private Stat performAStarHelper(PuzzleState initialState, int heuristic) {
         // start timer
         long startTime = System.currentTimeMillis();
         // end timer
         long endTime;
+        // nodes generated
+        int nodesGenerated = 0;
         // reset frontier, goal state, and visited set
         frontier = new PriorityQueue<>(INITIAL_CAPACITY, comparator);
         visitedSet = new HashSet<>();
@@ -55,8 +64,7 @@ public class AStar {
         // check to see if the initial state is the goal state
         if(initialState.equals(goalState)) {
             endTime = System.currentTimeMillis();
-            printOptimalSolution(endTime - startTime, heuristic);
-            return;
+            return printAndReturnOptimalSolution(endTime - startTime, heuristic, 0);
         }
         // add the starting puzzle to the frontier
         frontier.add(initialState);
@@ -66,6 +74,8 @@ public class AStar {
             PuzzleState leastCostPuzzleState = frontier.remove();
             // generate all possible successors
             List<PuzzleState> successors = getSuccessors(leastCostPuzzleState);
+            // add successor count to nodes generated
+            nodesGenerated += successors.size();
             for(int i = 0; i < successors.size(); i++) {
                 PuzzleState successor = successors.get(i);
                 // if the successor is equal to the goal state, stop the search
@@ -74,8 +84,7 @@ public class AStar {
                     goalState.setParent(successor.getParent());
                     goalState.setF(successor.getF());
                     endTime = System.currentTimeMillis();
-                    printOptimalSolution(endTime - startTime, heuristic);
-                    return;
+                    return printAndReturnOptimalSolution(endTime - startTime, heuristic, nodesGenerated);
                 }
                 // parent g value + distance between successor and parent
                 // increase moves by 1
@@ -91,6 +100,7 @@ public class AStar {
             // add to our visited set
             visitedSet.add(leastCostPuzzleState);
         }
+        return null;
     }
 
     private List<PuzzleState> getSuccessors(PuzzleState state) {
@@ -168,30 +178,36 @@ public class AStar {
         return value;
     }
 
-    private void printOptimalSolution(long time, int heuristic) {
+    private Stat printAndReturnOptimalSolution(long time, int heuristic, int nodesGenerated) {
+        // create optimal path list
+        List<PuzzleState> optimalPath = new ArrayList<>();
+        PuzzleState current = goalState;
+        double completionTime = (double) time / 1000.0;
+        int searchCost = 0;
+        int depth = 0;
         // print heuristic message
         if(heuristic == HEURISTIC_ONE) System.out.println("\nINITIAL STATE W/ HEURISTIC ONE (MISPLACED TILES)");
         else System.out.println("\nINITIAL STATE W/ HEURISTIC TWO (MANHATTAN DISTANCE)");
-        // create optimal path list
-        List<PuzzleState> optimalPath = new ArrayList<>();
-        int searchCost = 0;
-        PuzzleState current = goalState;
         while(current != null) {
             optimalPath.add(current);
             current = current.getParent();
         }
+        depth = (optimalPath.size() - 1);
         // print the solution
         for(int i = optimalPath.size() - 1; i >= 0; --i) {
             System.out.println(optimalPath.get(i));
             searchCost += optimalPath.get(i).getF();
         }
         // print time to run in seconds
-        System.out.println("\nTime to run: " + time / 1000.0 + " seconds");
+        System.out.println("\nTime to run: " + new DecimalFormat("#.#######").format(completionTime) + " seconds");
         // print total steps
-        System.out.println("Total steps: " + (optimalPath.size() - 1));
+        System.out.println("Total steps: " + depth);
+        // print number of nodes generated
+        System.out.println("Nodes generated: " + nodesGenerated);
         // print total cost
         System.out.println("Search cost: " + searchCost);
         System.out.println("FINISHED\n\n---------------------------------------------------");
+        return new Stat(depth, searchCost, nodesGenerated, completionTime);
     }
 
     // custom comparator class to sort PuzzleState objects

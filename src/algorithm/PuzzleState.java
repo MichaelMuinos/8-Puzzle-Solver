@@ -9,7 +9,6 @@ public class PuzzleState {
     public static final int SIZE = 3;
 
     private static final Random random = new Random();
-
     private List<Integer> boardNumbers;
     private PuzzleState parent;
     private int[][] board;
@@ -21,6 +20,11 @@ public class PuzzleState {
         init();
     }
 
+    public PuzzleState(int[][] board) {
+        init();
+        this.board = board;
+    }
+
     public PuzzleState(String str) {
         init();
         assignBoard(str);
@@ -30,6 +34,7 @@ public class PuzzleState {
         board = new int[SIZE][SIZE];
         boardNumbers = new ArrayList<>();
     }
+
 
     private void assignBoard(String str) {
         int count = 0;
